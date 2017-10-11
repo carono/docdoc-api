@@ -1,0 +1,25 @@
+{
+  "name": "carono/docdoc-api",
+  "description": "docdoc.ru non-official api client",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Aleksandr Kasyanov",
+      "email": "info@carono.ru",
+      "homepage": "http://carono.ru"
+    }
+  ],
+  "require": {
+    "guzzlehttp/guzzle": "^6.2",
+    "carono/rest-client": "^0.1.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "carono\\docdoc\\": "src",
+      "carono\\docdoc\\codegen\\": "codegen"
+    }
+  },
+  "require-dev": {
+    "carono/codegen": "^0.0.3"
+  }
+}
