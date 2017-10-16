@@ -50,6 +50,11 @@ class AbstractClient extends ClassGenerator
             $method = $this->phpClass->addMethod($methodName);
             $method->addComment("@url $url\n");
             $requiredParams = [];
+            foreach (self::extractParamsFromUrl($url) as $part) {
+                $arr = explode('/', $part);
+
+                $requiredParams[] = "'$arr[0]' => $arr[1]";
+            }
             foreach ($item['request']['params'] as $param) {
                 $paramName = lcfirst($param['name']);
                 if (isset($param['require']) && $param['require'] == 'Да') {
@@ -57,7 +62,6 @@ class AbstractClient extends ClassGenerator
                     $description = $param['description'];
                     $type = self::formParamType($param['type']);
                     $method->addComment("@param $type \$$paramName $description");
-                    $requiredParams[] = "'{$param['name']}' => \$$paramName";
                 }
             }
             $apiMethod = join('/', self::clearUrl($url));
@@ -91,10 +95,17 @@ PHP;
         return isset($types[$str]) ? $types[$str] : $str;
     }
 
+    /**
+     * @param $url
+     * @return array
+     */
     protected static function extractParamsFromUrl($url)
     {
-        preg_match_all('#\w+/\$\w+#', $url, $m);
-        return $m;
+        if (preg_match_all('#\w+/\$\w+#', $url, $m)) {
+            return $m[0];
+        } else {
+            return [];
+        }
     }
 
     protected static function clearUrl($url)

@@ -30,7 +30,8 @@ class AbstractClient extends \carono\rest\Client
 	{
 		$params = [
 			'lat' => $lat,
-			'lng' => $lng
+			'lng' => $lng,
+			'city' => $city
 		];
 		return (new NearestStationGeo('nearestStationGeo', $this))->setParams($params);
 	}
@@ -46,7 +47,7 @@ class AbstractClient extends \carono\rest\Client
 	public function nearDistricts($districtID, $limit)
 	{
 		$params = [
-			'districtID' => $districtID,
+			'id' => $districtID,
 			'limit' => $limit
 		];
 		return (new NearDistricts('nearDistricts', $this))->setParams($params);
@@ -74,7 +75,10 @@ class AbstractClient extends \carono\rest\Client
 	public function clinicCount($cityID)
 	{
 		$params = [
-			'cityID' => $cityID
+			'city' => $cityID,
+			'type' => $clinicType,
+			'stations' => $stationsID,
+			'speciality' => $specialityID
 		];
 		return (new ClinicCount('clinic/count', $this))->setParams($params);
 	}
@@ -89,7 +93,7 @@ class AbstractClient extends \carono\rest\Client
 	public function review($iD)
 	{
 		$params = [
-			'ID' => $iD
+			'clinic' => $ID
 		];
 		return (new Review('review', $this))->setParams($params);
 	}
