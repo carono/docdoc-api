@@ -72,21 +72,21 @@ class AbstractClient extends ClassGenerator
                     }
                 }
             }
-            $apiMethodClass = new Method();
-            $apiMethodClass->renderToFile([
-                'name' => $methodName,
-                'response' => isset($item['response']) ? $item['response'] : [],
-                'request' => $item['request']
-            ]);
-            $apiMethodClassName = $apiMethodClass->formClassNamespace() . '\\' . $apiMethodClass->formClassName();
+//            $apiMethodClass = new Method();
+//            $apiMethodClass->renderToFile([
+//                'name' => $methodName,
+//                'response' => isset($item['response']) ? $item['response'] : [],
+//                'request' => $item['request']
+//            ]);
+//            $apiMethodClassName = $apiMethodClass->formClassNamespace() . '\\' . $apiMethodClass->formClassName();
             $requiredParamsStr = self::arrayAsPhpVar($requiredParams);
             $body = <<<PHP
 \$params = $requiredParamsStr;
-return (new {$apiMethodClass->formClassName()}('$apiUrl', \$this))->setParams(\$params);
+return (new Response('$apiUrl', \$this))->setParams(\$params);
 PHP;
             $method->addBody($body);
-            $method->addComment('@return ' . $apiMethodClass->formClassName());
-            $this->phpNamespace->addUse($apiMethodClassName);
+            $method->addComment('@return Response');
+            $this->phpNamespace->addUse('\carono\docdoc\Response');
         }
         return false;
     }

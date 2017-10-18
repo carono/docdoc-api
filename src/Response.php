@@ -3,8 +3,12 @@
 
 namespace carono\docdoc;
 
-
-abstract class AbstractMethod extends \ArrayObject
+/**
+ * Class Response
+ *
+ * @package carono\docdoc
+ */
+class Response extends \ArrayObject
 {
     protected $client;
     protected $method;
@@ -18,11 +22,20 @@ abstract class AbstractMethod extends \ArrayObject
         return $result;
     }
 
+    /**
+     * @param $name
+     * @param $value
+     * @return $this
+     */
     public function add($name, $value)
     {
         $this[$name] = $value;
+        return $this;
     }
 
+    /**
+     * @return \StdClass
+     */
     public function getResult()
     {
         return $this->client->getContent($this->method, $this->toArray());
