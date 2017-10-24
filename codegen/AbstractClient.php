@@ -55,22 +55,25 @@ class AbstractClient extends ClassGenerator
             }
             $requiredParams = [];
             if (isset($item['request']['params'])) {
-                foreach ($item['request']['params'] as $param) {
-                    $originalName = $param['name'];
-                    $paramName = lcfirst($param['name']);
-                    if (strlen($paramName) == 2) {
-                        $paramName = strtolower($paramName);
-                    }
-                    if (isset($param['require']) && $param['require'] == 'Да') {
-                        $method->addParameter($paramName);
-                        $description = $param['description'];
-                        $type = self::formParamType($param['type']);
-                        $method->addComment("@param $type \$$paramName $description");
-                        if ($idx = array_search("$$originalName", $urlParams)) {
-                            $requiredParams[] = "'$idx' => " . '$' . $paramName;
-                        }
-                    }
+                foreach (self::formRequiredParams($url, $item['request']['params']) as $param) {
+
                 }
+//                foreach ($item['request']['params'] as $param) {
+//                    $originalName = $param['name'];
+//                    $paramName = lcfirst($param['name']);
+//                    if (strlen($paramName) == 2) {
+//                        $paramName = strtolower($paramName);
+//                    }
+//                    if (isset($param['require']) && $param['require'] == 'Да') {
+//                        $method->addParameter($paramName);
+//                        $description = $param['description'];
+//                        $type = self::formParamType($param['type']);
+//                        $method->addComment("@param $type \$$paramName $description");
+//                        if ($idx = array_search("$$originalName", $urlParams)) {
+//                            $requiredParams[] = "'$idx' => " . '$' . $paramName;
+//                        }
+//                    }
+//                }
             }
 //            $apiMethodClass = new Method();
 //            $apiMethodClass->renderToFile([
@@ -102,6 +105,23 @@ PHP;
         return isset($types[$str]) ? $types[$str] : $str;
     }
 
+    protected static function formRequiredParams($url, $params)
+    {
+//        $extracted = self::extractParamsFromUrl($url);
+        $result = [];
+        foreach ($params as $param) {
+            if (isset($param['require']) && $param['require'] == 'Да') {
+                $paramName = $param['name'];
+                if (strlen($paramName) == 2) {
+                    $paramName = strtolower($paramName);
+                }
+                $param['name'] = $paramName;
+                $result[] = $param;
+            }
+        }
+        return $result;
+    }
+
     /**
      * @param $url
      * @return array
@@ -109,7 +129,12 @@ PHP;
     protected static function extractParamsFromUrl($url)
     {
         if (preg_match_all('#[\w\-]+/\$[\w\-]+#', $url, $m)) {
-            return $m[0];
+            $result = [];
+            foreach ($m[0] as $item) {
+                $arr = explode('/', $item);
+                $result[$arr[0]] = $arr[1];
+            }
+            return $result;
         } else {
             return [];
         }
